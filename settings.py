@@ -2,72 +2,118 @@
 
 import os
 from pathlib import Path
-import environ # 1. استيراد django-environ
+import environ   # django-environ
 
-# 1. تهيئة environ وقراءة ملف .env
+# ----------------------------------------------------------------------
+# 1. إعداد environ وقراءة ملف .env
+# ----------------------------------------------------------------------
 env = environ.Env(
-    # تعيين الأنواع الافتراضية للمتغيرات
     DEBUG=(bool, False)
 )
+
 BASE_DIR = Path(__file__).resolve().parent.parent
-environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 
 
 # ----------------------------------------------------------------------
-# Core Django Settings
+# 2. الإعدادات الأساسية لدجانغو
 # ----------------------------------------------------------------------
-SECRET_KEY = env('SECRET_KEY')
-DEBUG = env('DEBUG')
-ALLOWED_HOSTS = env.list('ALLOWED_HOSTS')
+SECRET_KEY = env("SECRET_KEY")
+DEBUG = env("DEBUG")
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[])
 
 
-# 2. التطبيقات المثبتة (Installed Apps)
+# ----------------------------------------------------------------------
+# 3. التطبيقات المثبتة
+# ----------------------------------------------------------------------
 INSTALLED_APPS = [
+    # Django default apps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
+
     # Third-party apps
-    'rest_framework',        # djangorestframework
-    'corsheaders',           # django-cors-headers
-    'drf_yasg',              # Swagger/OpenAPI documentation
-    
-    # Project Apps
-    'listings.apps.ListingsConfig', # التطبيق الجديد
+    'rest_framework',
+    'corsheaders',
+    'drf_yasg',
+
+    # Project apps
+    'listings.apps.ListingsConfig',
 ]
 
-# (MIDDLEWARE, TEMPLATES, AUTH_PASSWORD_VALIDATORS ... remain the same)
 
 # ----------------------------------------------------------------------
-# 3. إعداد قاعدة البيانات (MySQL)
+# 4. الوسطاء (Middleware)
+# ----------------------------------------------------------------------
+MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',  # يجب أن يكون قبل CommonMiddleware
+    'django.middleware.common.CommonMiddleware',
+
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+
+# ----------------------------------------------------------------------
+# 5. إعدادات القوالب (Templates)
+# ----------------------------------------------------------------------
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
+
+
+# ----------------------------------------------------------------------
+# 6. قاعدة البيانات (MySQL عبر .env)
 # ----------------------------------------------------------------------
 DATABASES = {
-    # قراءة إعدادات MySQL من متغير DATABASE_URL في ملف .env
-    'default': env.db(),
+    'default': env.db(),     # DATABASE_URL من env
 }
 
 
 # ----------------------------------------------------------------------
-# 4. إعداد Django REST Framework و CORS
+# 7. إعداد Django REST Framework
 # ----------------------------------------------------------------------
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.AllowAny',
+        'rest_framework.permissions.IsAuthenticated',
     ],
-    # يمكنك إضافة إعدادات أخرى هنا لاحقًا
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ]
 }
 
-# CORS Headers configuration
-CORS_ALLOWED_ORIGINS = env.list('CORS_ALLOWED_ORIGINS', default=[])
-CORS_ALLOW_ALL_ORIGINS = DEBUG # السماح للكل في وضع التطوير (DEBUG=True)
 
 # ----------------------------------------------------------------------
-# 5. إعداد Celery (للتذكير في المستقبل)
+# 8. إعدادات CORS
 # ----------------------------------------------------------------------
-# CELERY_BROKER_URL = env('CELERY_BROKER_URL', default='redis://localhost:6379/0')
-# CELERY_RESULT_BACKEND = env('CELERY_RESULT_BACKEND', default='redis://localhost:6379/0')
+CORS_ALLOWED_ORIGINS = env.list("CORS_ALLOWED_ORIGINS", default=[])
+CORS_ALLOW_ALL_ORIGINS = DEBUG  # مسموح فقط أثناء التطوير
 
-# (STATIC_URL, DEFAULT_AUTO_FIELD ... remain the same)
+
+# ----------------------------------------------------------------------
+# 9. الملفات الثابتة
+# ----------------------------------------------------------------------
+STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
