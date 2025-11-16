@@ -1,5 +1,7 @@
-# alx-backend-python
+# 0x03-Unittests and Integration Tests
 
-Project: 0x03 - Unittests and Integration Tests
+This directory contains tests for:
 
-This project contains tasks for learning unit testing and integration testing in Python.
+- `access_nested_map`
+- `get_json`
+- `GithubOrgClient`

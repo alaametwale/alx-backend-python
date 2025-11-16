@@ -33,7 +33,8 @@ class TestGithubOrgClient(unittest.TestCase):
         payload = {"repos_url": "http://some_url.com"}
         client = GithubOrgClient("test_org")
 
-        with patch.object(GithubOrgClient, "org", new_callable=unittest.mock.PropertyMock) as mock_org:
+        with patch.object(GithubOrgClient, "org",
+                          new_callable=unittest.mock.PropertyMock) as mock_org:
             mock_org.return_value = payload
             result = client._public_repos_url()
 
@@ -42,7 +43,6 @@ class TestGithubOrgClient(unittest.TestCase):
     @patch("client.get_json")
     def test_public_repos(self, mock_get_json):
         """Test GithubOrgClient.public_repos returns expected list"""
-        # إعداد payload وهمي للدوال
         test_payload = [
             {"name": "repo1", "license": {"key": "mit"}},
             {"name": "repo2", "license": {"key": "apache-2.0"}},
@@ -51,13 +51,10 @@ class TestGithubOrgClient(unittest.TestCase):
 
         client = GithubOrgClient("test_org")
 
-        # Mock _public_repos_url لارجاع URL وهمي
-        with patch.object(GithubOrgClient, "_public_repos_url", return_value="http://some_url.com") as mock_url:
+        with patch.object(GithubOrgClient, "_public_repos_url",
+                          return_value="http://some_url.com") as mock_url:
             repos = client.public_repos()
 
-        # التحقق من النتائج
         self.assertEqual(repos, ["repo1", "repo2"])
-
-        # التأكد من أن الدالتين تم استدعاؤهما مرة واحدة
         mock_get_json.assert_called_once()
         mock_url.assert_called_once()
