@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+"""Module for testing utility functions: access_nested_map, get_json, and memoize."""
 import unittest
 from unittest.mock import Mock, patch
 from parameterized import parameterized
@@ -6,6 +7,7 @@ from typing import Mapping, Sequence, Any, AnyStr
 
 # افتراض أن الدالة access_nested_map موجودة في ملف utils.py
 from utils import access_nested_map, get_json, memoize
+
 
 class TestAccessNestedMap(unittest.TestCase):
     """اختبارات الوحدة لدالة access_nested_map."""
@@ -15,28 +17,30 @@ class TestAccessNestedMap(unittest.TestCase):
         ({"a": {"b": 2}}, ("a",), {"b": 2}),
         ({"a": {"b": 2}}, ("a", "b"), 2),
     ])
-    def test_access_nested_map(self, nested_map: Mapping, path: Sequence, expected: Any) -> None:
+    def test_access_nested_map(self, nested_map: Mapping, path: Sequence,
+                               expected: Any) -> None:
         """اختبار الوصول إلى قيمة في خريطة متداخلة بمسارات صالحة."""
         self.assertEqual(access_nested_map(nested_map, path), expected)
 
     @parameterized.expand([
-        # الحالة 1: الخريطة فارغة والمفتاح مفقود. المفتاح المفقود المتوقع هو 'a'.
+        # الحالة 1: الخريطة فارغة والمفتاح المتوقع: 'a'.
         ({}, ("a",), "a"),
-        # الحالة 2: المسار يؤدي إلى قيمة غير قاموسية والمفتاح التالي مفقود. المفتاح المفقود المتوقع هو 'b'.
+        # الحالة 2: المسار غير صحيح. المفتاح المفقود المتوقع هو 'b'.
         ({"a": 1}, ("a", "b"), "b"),
     ])
-    def test_access_nested_map_exception(self, nested_map: Mapping, path: Sequence, expected_key: AnyStr) -> None:
+    def test_access_nested_map_exception(self, nested_map: Mapping, path: Sequence,
+                                         expected_key: AnyStr) -> None:
         """
         اختبار أن الدالة access_nested_map تثير خطأ KeyError للمدخلات غير الصالحة،
         والتأكد من أن حجة الاستثناء (رسالة الخطأ) هي المفتاح المفقود المتوقع.
         """
-        # استخدام مدير السياق assertRaises لاختبار إثارة KeyError
+        # استخدام مدير السياق assertRaises لاختبار إثارة KeyError.
         with self.assertRaises(KeyError) as cm:
             access_nested_map(nested_map, path)
         
-        # التأكد من أن حجة الاستثناء الأولى (وهي رسالة الخطأ) تطابق المفتاح المفقود المتوقع
-        self.assertEqual(cm.exception.args[0], expected_key,
-                         f"رسالة استثناء KeyError غير صحيحة. المتوقع: '{expected_key}', الفعلي: {cm.exception.args[0]}")
+        # التأكد من أن حجة الاستثناء الأولى تطابق المفتاح المفقود المتوقع
+        self.assertEqual(cm.exception.args[0], expected_key)
+
 
 class TestGetJson(unittest.TestCase):
     """اختبارات الوحدة لدالة utils.get_json باستخدام المزيفات."""
@@ -46,7 +50,8 @@ class TestGetJson(unittest.TestCase):
         ("http://holberton.io", {"payload": False}),
     ])
     @patch('utils.requests.get')
-    def test_get_json(self, test_url: str, test_payload: Mapping, mock_get: Mock) -> None:
+    def test_get_json(self, test_url: str, test_payload: Mapping,
+                      mock_get: Mock) -> None:
         """
         اختبار أن دالة get_json ترجع الحمولة المتوقعة (test_payload)
         وأن requests.get يتم استدعاؤه مرة واحدة بعنوان URL الصحيح (test_url).
@@ -60,7 +65,7 @@ class TestGetJson(unittest.TestCase):
         # 2. استدعاء الدالة المراد اختبارها
         result = get_json(test_url)
 
-        # 3. اختبار أن طريقة get الساخرة قد تم استدعاؤها مرة واحدة بالضبط مع test_url
+        # 3. اختبار أن mock_get تم استدعاؤها مرة واحدة بالضبط مع test_url.
         mock_get.assert_called_once_with(test_url)
 
         # 4. اختبار أن الناتج يساوي test_payload
