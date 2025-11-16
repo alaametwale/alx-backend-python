@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Module for testing utility functions: access_nested_map, get_json, and memoize."""
+"""Module for testing utility functions: access_nested_map, get_json, memoize."""
 import unittest
 from unittest.mock import Mock, patch
 from parameterized import parameterized
@@ -31,13 +31,14 @@ class TestAccessNestedMap(unittest.TestCase):
     def test_access_nested_map_exception(self, nested_map: Mapping, path: Sequence,
                                          expected_key: AnyStr) -> None:
         """
-        اختبار أن الدالة access_nested_map تثير خطأ KeyError للمدخلات غير الصالحة،
-        والتأكد من أن حجة الاستثناء (رسالة الخطأ) هي المفتاح المفقود المتوقع.
+        اختبار أن الدالة access_nested_map تثير خطأ KeyError للمدخلات غير
+        الصالحة، والتأكد من أن حجة الاستثناء (رسالة الخطأ) هي المفتاح
+        المفقود المتوقع.
         """
         # استخدام مدير السياق assertRaises لاختبار إثارة KeyError.
         with self.assertRaises(KeyError) as cm:
             access_nested_map(nested_map, path)
-        
+
         # التأكد من أن حجة الاستثناء الأولى تطابق المفتاح المفقود المتوقع
         self.assertEqual(cm.exception.args[0], expected_key)
 
@@ -94,16 +95,15 @@ class TestMemoize(unittest.TestCase):
                 return self.a_method()
 
         # استخدام patch.object لتزييف a_method داخل TestClass
-        with patch.object(TestClass, 'a_method', return_value=42) as mock_a_method:
+        with patch.object(TestClass, 'a_method',
+                          return_value=42) as mock_a_method:
             # إنشاء كائن من الفئة
             test_instance = TestClass()
 
-            # الاستدعاء الأول لـ a_property
-            # يجب أن يستدعي a_method
+            # الاستدعاء الأول لـ a_property. يجب أن يستدعي a_method.
             result1 = test_instance.a_property
 
-            # الاستدعاء الثاني لـ a_property
-            # يجب أن يعيد النتيجة المخزنة مؤقتاً دون استدعاء a_method مرة أخرى
+            # الاستدعاء الثاني لـ a_property. يجب أن يعيد النتيجة المخزنة مؤقتاً.
             result2 = test_instance.a_property
 
             # 1. اختبار أن النتيجة الصحيحة يتم إرجاعها (42)
