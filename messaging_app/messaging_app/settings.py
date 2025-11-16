@@ -1,13 +1,15 @@
 from pathlib import Path
 
+# مسار المشروع
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-your-secret-key'
+SECRET_KEY = 'django-insecure-change-this-key'
 
 DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# التطبيقات المثبتة
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -15,7 +17,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'chats',  # app الخاص بالدردشة
+    'chats',  # تطبيقنا
 ]
 
 MIDDLEWARE = [
@@ -48,6 +50,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'messaging_app.wsgi.application'
 
+# قاعدة البيانات
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -55,7 +58,21 @@ DATABASES = {
     }
 }
 
-AUTH_PASSWORD_VALIDATORS = []
+# كلمات المرور
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
+]
 
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
