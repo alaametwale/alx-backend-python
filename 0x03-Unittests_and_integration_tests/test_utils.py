@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import unittest
 from parameterized import parameterized
 from typing import Mapping, Sequence, Any
@@ -40,5 +41,3 @@ class TestAccessNestedMap(unittest.TestCase):
         # التأكد من أن حجة الاستثناء الأولى (وهي رسالة الخطأ) تطابق المفتاح المفقود المتوقع
         self.assertEqual(cm.exception.args[0], expected_key,
                          f"رسالة استثناء KeyError غير صحيحة. المتوقع: '{expected_key}', الفعلي: {cm.exception.args[0]}")
-
-# ملاحظة: يجب أن يظل ملف utils.py كما هو لإنجاح الاختبار
