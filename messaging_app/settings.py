@@ -9,16 +9,24 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-# التطبيقات المثبتة
 INSTALLED_APPS = [
+    # التطبيقات الافتراضية
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'chats',  # تطبيقنا
+
+    # تطبيقك
+    'chats',
+
+    # DRF
+    'rest_framework',
 ]
+
+
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
