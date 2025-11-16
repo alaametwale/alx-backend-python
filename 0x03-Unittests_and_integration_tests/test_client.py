@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
-"""
-Tests for GithubOrgClient.org method.
-"""
+"""Tests for GithubOrgClient.org method."""
+
 import unittest
 from unittest.mock import patch
 from parameterized import parameterized
@@ -19,7 +18,7 @@ class TestGithubOrgClient(unittest.TestCase):
     def test_org(self, org_name, mock_get_json):
         """Test that GithubOrgClient.org returns correct data"""
 
-        expected = {"payload": True}
+        expected = {"org": org_name}
         mock_get_json.return_value = expected
 
         client = GithubOrgClient(org_name)
