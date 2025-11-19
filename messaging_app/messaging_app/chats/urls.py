@@ -1,7 +1,16 @@
-# chats/urls.py
-from django.urls import path
+from django.urls import path, include
+from rest_framework_nested import routers
+from .views import ConversationViewSet, MessageViewSet
 
-# لا يوجد مسارات API حتى الآن، لكن هذا الملف ضروري لتجنب خطأ الاستيراد.
+# Main router
+router = routers.DefaultRouter()
+router.register(r'conversations', ConversationViewSet, basename='conversations')
+
+# Nested router for messages under conversations
+convo_router = routers.NestedDefaultRouter(router, r'conversations', lookup='conversation')
+convo_router.register(r'messages', MessageViewSet, basename='conversation-messages')
+
 urlpatterns = [
-    # path('messages/', views.MessageListCreate.as_view(), name='message-list'),
+    path('', include(router.urls)),
+    path('', include(convo_router.urls)),
 ]

@@ -1,15 +1,17 @@
-from pathlib import Path
+"""
+Django settings for messaging_app project.
+"""
 
-# مسار المشروع
+from pathlib import Path
+from datetime import timedelta
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-change-this-key'
-
+SECRET_KEY = 'your-secret-key'
 DEBUG = True
 
 ALLOWED_HOSTS = []
 
-# التطبيقات المثبتة
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -17,7 +19,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'chats',  # تطبيقنا
+
+    # DRF
+    'rest_framework',
+
+    # JWT
+    'rest_framework_simplejwt',
+
+    # Local apps
+    'messaging_app.chats',
 ]
 
 MIDDLEWARE = [
@@ -50,7 +60,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'messaging_app.wsgi.application'
 
-# قاعدة البيانات
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -58,7 +67,6 @@ DATABASES = {
     }
 }
 
-# كلمات المرور
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -82,3 +90,26 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# ==========================
+# 🔐 REST FRAMEWORK SETTINGS
+# ==========================
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        # JWT Auth
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+
+        # Session Auth (اختياري لكنه مطلوب وفق المنصة)
+        'rest_framework.authentication.SessionAuthentication',
+    ]
+}
+
+
+# ==========================
+# 🔐 JWT CONFIG
+# ==========================
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+}
