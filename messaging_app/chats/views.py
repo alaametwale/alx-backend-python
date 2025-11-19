@@ -1,38 +1,23 @@
-from rest_framework import viewsets, status
-from rest_framework.permissions import IsAuthenticated
+from rest_framework import viewsets, permissions
 from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
 from .models import Message, Conversation
 from .serializers import MessageSerializer
 from .permissions import IsParticipantOfConversation
+from .pagination import MessagePagination
+from .filters import MessageFilter
+from django_filters.rest_framework import DjangoFilterBackend
 
 class MessageViewSet(viewsets.ModelViewSet):
     serializer_class = MessageSerializer
-    permission_classes = [IsAuthenticated, IsParticipantOfConversation]
+    permission_classes = [permissions.IsAuthenticated, IsParticipantOfConversation]
+    pagination_class = MessagePagination
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = MessageFilter
 
     def get_queryset(self):
-        conversation_id = self.request.query_params.get("conversation_id")
-        if conversation_id:
-            return Message.objects.filter(
-                conversation__id=conversation_id,
-                conversation__participants=self.request.user
-            )
-        # Return all messages of user if no conversation_id provided
-        return Message.objects.filter(conversation__participants=self.request.user)
-
-    def perform_create(self, serializer):
-        conversation_id = self.request.data.get("conversation_id")
-        try:
-            conversation = Conversation.objects.get(id=conversation_id)
-        except Conversation.DoesNotExist:
-            return Response(
-                {"detail": "Conversation not found."},
-                status=status.HTTP_404_NOT_FOUND
-            )
-
+        conversation_id = self.kwargs.get("conversation_id")
+        conversation = get_object_or_404(Conversation, id=conversation_id)
         if self.request.user not in conversation.participants.all():
-            return Response(
-                {"detail": "You are not a participant of this conversation."},
-                status=status.HTTP_403_FORBIDDEN
-            )
-
-        serializer.save(sender=self.request.user, conversation=conversation)
+            return Message.objects.none()
+        return Message.objects.filter(conversation=conversation).order_by('-created_at')
