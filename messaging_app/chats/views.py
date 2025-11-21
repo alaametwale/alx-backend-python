@@ -1,23 +1,33 @@
-from rest_framework import viewsets, permissions
-from rest_framework.response import Response
-from django.shortcuts import get_object_or_404
-from .models import Message, Conversation
+from rest_framework import generics
+from rest_framework.permissions import IsAuthenticated
+from .models import Message
 from .serializers import MessageSerializer
-from .permissions import IsParticipantOfConversation
-from .pagination import MessagePagination
 from .filters import MessageFilter
+from .permissions import IsMessageOwner
 from django_filters.rest_framework import DjangoFilterBackend
+from .pagination import MessagePagination
 
-class MessageViewSet(viewsets.ModelViewSet):
+
+class MessageListView(generics.ListAPIView):
+    """
+    API endpoint to return paginated + filtered messages.
+    """
+    queryset = Message.objects.all().order_by('-timestamp')
     serializer_class = MessageSerializer
-    permission_classes = [permissions.IsAuthenticated, IsParticipantOfConversation]
-    pagination_class = MessagePagination
+    permission_classes = [IsAuthenticated]
+
+    # Enable filtering
     filter_backends = [DjangoFilterBackend]
     filterset_class = MessageFilter
 
-    def get_queryset(self):
-        conversation_id = self.kwargs.get("conversation_id")
-        conversation = get_object_or_404(Conversation, id=conversation_id)
-        if self.request.user not in conversation.participants.all():
-            return Message.objects.none()
-        return Message.objects.filter(conversation=conversation).order_by('-created_at')
+    # Enable pagination
+    pagination_class = MessagePagination
+
+
+class MessageDetailView(generics.RetrieveAPIView):
+    """
+    Get a single message with permission protection.
+    """
+    queryset = Message.objects.all()
+    serializer_class = MessageSerializer
+    permission_classes = [IsAuthenticated, IsMessageOwner]

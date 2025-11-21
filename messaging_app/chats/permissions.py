@@ -1,14 +1,33 @@
-from rest_framework import permissions
+from rest_framework import generics
+from rest_framework.permissions import IsAuthenticated
+from .models import Message
+from .serializers import MessageSerializer
+from .filters import MessageFilter
+from .permissions import IsMessageOwner
+from django_filters.rest_framework import DjangoFilterBackend
+from .pagination import MessagePagination
 
-class IsParticipantOfConversation(permissions.BasePermission):
+
+class MessageListView(generics.ListAPIView):
     """
-    Custom permission: only participants of a conversation can access or modify messages.
+    API endpoint to return paginated + filtered messages.
     """
+    queryset = Message.objects.all().order_by('-timestamp')
+    serializer_class = MessageSerializer
+    permission_classes = [IsAuthenticated]
 
-    def has_object_permission(self, request, view, obj):
-        # Check if user is part of the conversation
-        return request.user in obj.conversation.participants.all()
+    # Enable filtering
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = MessageFilter
 
-    def has_permission(self, request, view):
-        # Allow only authenticated users
-        return request.user and request.user.is_authenticated
+    # Enable pagination
+    pagination_class = MessagePagination
+
+
+class MessageDetailView(generics.RetrieveAPIView):
+    """
+    Get a single message with permission protection.
+    """
+    queryset = Message.objects.all()
+    serializer_class = MessageSerializer
+    permission_classes = [IsAuthenticated, IsMessageOwner]
