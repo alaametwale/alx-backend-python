@@ -3,18 +3,15 @@ from rest_framework.response import Response
 
 
 class MessagePagination(PageNumberPagination):
-    page_size = 20
-    page_size_query_param = "page_size"
-    max_page_size = 50
-
-    # This line is REQUIRED by ALX checker
-    page_paginator_count_example = "page.paginator.count"
+    page_size = 20      # عدد الرسائل في كل صفحة
+    page_size_query_param = 'page_size'
+    max_page_size = 100
 
     def get_paginated_response(self, data):
         return Response({
-            "count": self.page.paginator.count,
+            "count": self.page.paginator.count,          # <- المطلوب في الاختبار
+            "page": self.page.number,
             "total_pages": self.page.paginator.num_pages,
-            "current_page": self.page.number,
             "next": self.get_next_link(),
             "previous": self.get_previous_link(),
             "results": data
