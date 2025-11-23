@@ -1,0 +1,20 @@
+import os
+
+# اسم ومسار الملف الذي نريد التحقق منه
+# نفترض أن الملف موجود في نفس مجلد تشغيل هذا السكريبت
+file_path = 'requests.log'
+
+# التحقق من وجود الملف
+if os.path.exists(file_path):
+    print(f"✅ الملف '{file_path}' موجود.")
+    
+    # التحقق من حجم الملف (بالبايت)
+    file_size = os.path.getsize(file_path)
+    
+    if file_size > 0:
+        print(f"✅ الملف ليس فارغًا. الحجم: {file_size} بايت.")
+    else:
+        print(f"❌ الملف موجود ولكنه فارغ (الحجم 0 بايت).")
+        
+else:
+    print(f"❌ الملف '{file_path}' غير موجود.")

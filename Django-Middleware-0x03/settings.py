@@ -34,10 +34,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
-    # Custom Middleware
+    
+    # إضافة middleware الخاص بتسجيل الطلبات
     'chats.middleware.RequestLoggingMiddleware',
 ]
+
 
 ROOT_URLCONF = 'Django_Middleware_0x03.urls'
 

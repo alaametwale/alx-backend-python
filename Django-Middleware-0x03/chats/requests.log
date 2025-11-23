@@ -1,0 +1,3 @@
+# Request log initialized
+# Each incoming request will be logged here in the format:
+# [timestamp] - User: <user> - Path: <request.path>

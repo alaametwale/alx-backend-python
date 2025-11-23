@@ -1,0 +1,13 @@
+import Header from "../components/layout/Header";
+
+export default function Home() {
+  return (
+    <>
+      <Header />
+      <main className="flex flex-col items-center justify-center min-h-screen p-6">
+        <h2 className="text-2xl font-bold mt-4">Welcome to ALX Next.js Setup Project!</h2>
+        <p className="mt-2">Your project is successfully running 🎉</p>
+      </main>
+    </>
+  );
+}
