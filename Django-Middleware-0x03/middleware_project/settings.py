@@ -47,6 +47,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    
+     'chats.middleware.RestrictAccessByTimeMiddleware',
+
 ]
 
 ROOT_URLCONF = 'middleware_project.urls'

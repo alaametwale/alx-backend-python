@@ -17,4 +17,6 @@ if os.path.exists(file_path):
         print(f"❌ الملف موجود ولكنه فارغ (الحجم 0 بايت).")
         
 else:
-    print(f"❌ الملف '{file_path}' غير موجود.")
+    print(f"❌ الملف '{file_path}' غير موجود.")# Request log initialized
+# Each incoming request will be logged here in the format:
+# [timestamp] - User: <user> - Path: <request.path>

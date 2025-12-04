@@ -161,4 +161,16 @@ git push origin main
 
 إذا أحببت، أقدر أجهز لك **كلاسات Pagination و Filter** جاهزة للملف `chats/pagination.py` و `chats/filters.py` حتى تختفي كل الشيكات بالكامل.  
 
-هل تريد أن أفعل ذلك الآن؟
+هل تريد أن أفعل ذلك الآن؟import os
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.environ.get('MYSQL_DB'),
+        'USER': os.environ.get('MYSQL_USER'),
+        'PASSWORD': os.environ.get('MYSQL_PASSWORD'),
+        'HOST': 'db',
+        'PORT': '3306',
+    }
+}
+

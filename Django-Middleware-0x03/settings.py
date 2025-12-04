@@ -25,7 +25,6 @@ INSTALLED_APPS = [
     # Your app
     'chats',
 ]
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -34,11 +33,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    
-    # إضافة middleware الخاص بتسجيل الطلبات
+
+    # Custom Middleware
     'chats.middleware.RequestLoggingMiddleware',
 ]
-
 
 ROOT_URLCONF = 'Django_Middleware_0x03.urls'
 
