@@ -13,3 +13,5 @@ spec:
             name: django-service
             port:
               number: 80
+
+ 
