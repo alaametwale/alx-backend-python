@@ -1,0 +1,4 @@
+metadata:
+  labels:
+    app: django-messaging
+    version: blue
