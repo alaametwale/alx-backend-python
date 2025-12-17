@@ -1,0 +1,44 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_HUB_CREDENTIALS = credentials('docker-hub-credentials') // ضع اسم credentials في Jenkins
+        GITHUB_CREDENTIALS = credentials('github-credentials')
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/alaametwale/alx-backend-python.git', credentialsId: "${GITHUB_CREDENTIALS}"
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                sh 'python -m venv venv'
+                sh 'venv\\Scripts\\activate && pip install -r requirements.txt'
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                sh 'venv\\Scripts\\activate && pytest --junitxml=report.xml'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh 'docker build -t your-dockerhub-username/messaging_app:latest .'
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+                    sh 'docker push your-dockerhub-username/messaging_app:latest'
+                }
+            }
+        }
+    }
+}
