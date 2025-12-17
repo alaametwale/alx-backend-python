@@ -2,37 +2,32 @@ pipeline {
     agent any
 
     stages {
-        stage('Clone Repository') {
+        stage('Checkout') {
             steps {
-                git credentialsId: 'github-creds',
-                    url: 'https://github.com/alaametwale/alx-backend-python.git'
+                // سحب الكود من GitHub مع تحديد الفرع
+                git branch: 'main', url: 'https://github.com/alaametwale/alx-backend-python.git'
             }
         }
 
         stage('Install Dependencies') {
             steps {
-                sh '''
-                python3 -m venv venv
-                . venv/bin/activate
-                pip install --upgrade pip
-                pip install -r requirements.txt
-                '''
+                // تثبيت dependencies من ملف requirements.txt
+                sh 'pip3 install -r messaging_app/requirements.txt'
             }
         }
 
         stage('Run Tests') {
             steps {
-                sh '''
-                . venv/bin/activate
-                pytest --junitxml=report.xml
-                '''
+                // تشغيل pytest مع إنشاء تقرير XML
+                sh 'pytest messaging_app/messaging_app/tests --junitxml=report.xml'
             }
         }
-    }
 
-    post {
-        always {
-            junit 'report.xml'
+        stage('Archive Report') {
+            steps {
+                // حفظ التقرير كأرشيف
+                archiveArtifacts artifacts: 'report.xml', allowEmptyArchive: true
+            }
         }
     }
 }
