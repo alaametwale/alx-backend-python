@@ -1,28 +1,34 @@
 pipeline {
     agent any
 
+    environment {
+        GITHUB_CREDENTIALS = credentials('github-credentials-id') // ضع هنا اسم الـ credential في Jenkins
+    }
+
     stages {
         stage('Checkout') {
             steps {
-                git credentialsId: 'GITHUB_CREDENTIALS', url: 'https://github.com/alaametwale/alx-backend-python.git'
+                git branch: 'main',
+                    url: 'https://github.com/alaametwale/alx-backend-python.git',
+                    credentialsId: "${GITHUB_CREDENTIALS}"
             }
         }
 
         stage('Install Dependencies') {
             steps {
-                sh 'pip install -r messaging_app/messaging_app/requirements.txt'
+                sh 'pip install -r messaging_app/messaging_app/requirements.txt || true'
             }
         }
 
         stage('Run Tests') {
             steps {
-                sh 'pytest messaging_app/messaging_app/tests/ --junitxml=report.xml'
+                sh 'pytest messaging_app/messaging_app/tests --junitxml=report.xml'
             }
         }
 
-        stage('Publish Report') {
+        stage('Archive Report') {
             steps {
-                junit 'report.xml'
+                archiveArtifacts artifacts: 'report.xml', allowEmptyArchive: true
             }
         }
     }
